@@ -161,7 +161,7 @@ export default function LoginPage() {
             {/* Google */}
             <button
               onClick={handleGoogleLogin}
-              className="flex h-14 w-full items-center justify-center gap-3 rounded-2xl border border-gray-200 bg-white text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+              className="hover:cursor-pointer flex h-14 w-full items-center justify-center gap-3 rounded-2xl border border-gray-200 bg-white text-sm font-medium text-gray-700 transition hover:bg-gray-50"
             >
               <Image
                 src="https://www.svgrepo.com/show/475656/google-color.svg"

@@ -108,7 +108,7 @@ export default function RegisterPage() {
             </div>
 
             {/* Google OAuth Provider Button Control */}
-            <div className="mt-8">
+            <div className="mt-8 hover:cursor-pointer">
               <button
                 onClick={googleLoginHandler}
                 type="button"
