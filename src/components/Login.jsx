@@ -42,7 +42,14 @@ export default function LoginPage() {
   };
 
   const handleGoogleLogin = async () => {
-    setError("Google authentication is not configured. Please register and login using email/password.");
+    const { error: authError } = await authClient.signIn.social({
+      provider: "google",
+      callbackURL: "/home",
+    });
+
+    if (authError) {
+      setError(authError.message || "Google login failed.");
+    }
   };
 
   return (
@@ -218,6 +225,8 @@ export default function LoginPage() {
                   src="https://images.unsplash.com/photo-1651008376811-b90baee60c1f?q=80&w=1200&auto=format&fit=crop"
                   alt="Doctor"
                   fill
+                  sizes="(max-width: 1024px) 0vw, 50vw"
+                  loading="eager"
                   className="object-cover"
                 />
               </div>

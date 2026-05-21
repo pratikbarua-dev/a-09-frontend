@@ -7,6 +7,7 @@ import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { useSession, signOut } from "@/lib/auth-client";
 import { useRouter, usePathname } from "next/navigation";
+import Image from "next/image";
 
 export default function Navbar() {
   const [mobileMenu, setMobileMenu] = useState(false);
@@ -27,6 +28,7 @@ export default function Navbar() {
     router.push("/");
     router.refresh();
   };
+  
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/95 backdrop-blur">
@@ -61,8 +63,6 @@ export default function Navbar() {
             Find Doctors
           </Link>
 
-
-
           <Link
             href="/appointments"
             className={`pb-1 text-sm transition-all duration-200 border-b-2 ${
@@ -84,7 +84,13 @@ export default function Navbar() {
               <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar border-2 border-blue-500 p-0 overflow-hidden flex items-center justify-center">
                 <div className="w-10 h-10 rounded-full overflow-hidden relative">
                   {session.user.image ? (
-                    <img alt="User Avatar" src={session.user.image} className="object-cover h-full w-full" />
+                    <Image 
+                      alt="User Avatar" 
+                      src={session.user.image} 
+                      width={40} 
+                      height={40} 
+                      className="object-cover h-full w-full" 
+                    />
                   ) : (
                     <div className="bg-blue-600 text-white flex items-center justify-center font-bold text-base h-full w-full">
                       {session.user.name ? session.user.name.charAt(0).toUpperCase() : "U"}
@@ -164,8 +170,6 @@ export default function Navbar() {
               Find Doctors
             </Link>
 
-
-
             <Link
               onClick={() => setMobileMenu(false)}
               href="/appointments"
@@ -186,7 +190,13 @@ export default function Navbar() {
                   <div className="flex items-center gap-3 px-1 py-1">
                     <div className="w-10 h-10 rounded-full overflow-hidden relative border border-blue-500">
                       {session.user.image ? (
-                        <img alt="User Avatar" src={session.user.image} className="object-cover h-full w-full" />
+                        <Image 
+                          alt="User Avatar" 
+                          src={session.user.image} 
+                          width={40} 
+                          height={40} 
+                          className="object-cover h-full w-full" 
+                        />
                       ) : (
                         <div className="bg-blue-600 text-white flex items-center justify-center font-bold text-base h-full w-full">
                           {session.user.name ? session.user.name.charAt(0).toUpperCase() : "U"}

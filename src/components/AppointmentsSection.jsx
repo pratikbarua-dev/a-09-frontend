@@ -30,6 +30,7 @@ export default function AppointmentsSection() {
   const [rescheduleAppointment, setRescheduleAppointment] = useState(null);
   const [rescheduleDate, setRescheduleDate] = useState("");
   const [rescheduleTime, setRescheduleTime] = useState("");
+  const [rescheduleReason, setRescheduleReason] = useState("");
   const [rescheduleStatus, setRescheduleStatus] = useState("idle"); // idle | submitting | success | error
   const [rescheduleError, setRescheduleError] = useState("");
 
@@ -87,6 +88,7 @@ export default function AppointmentsSection() {
         date: newDateString,
         appointmentDate: rescheduleDate, // YYYY-MM-DD
         appointmentTime: formattedTime, // e.g. "10:30 AM"
+        rescheduleReason: rescheduleReason.trim() || undefined,
       });
 
       setRescheduleStatus("success");
@@ -97,6 +99,7 @@ export default function AppointmentsSection() {
         setRescheduleStatus("idle");
         setRescheduleDate("");
         setRescheduleTime("");
+        setRescheduleReason("");
         loadAppointments();
       }, 2000);
     } catch (err) {
@@ -386,6 +389,17 @@ export default function AppointmentsSection() {
                       value={rescheduleTime}
                       onChange={(e) => setRescheduleTime(e.target.value)}
                       className="h-11 w-full rounded-xl border border-gray-200 px-4 text-sm text-gray-700 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1">Reason for Rescheduling</label>
+                    <textarea
+                      value={rescheduleReason}
+                      onChange={(e) => setRescheduleReason(e.target.value)}
+                      placeholder="e.g. Schedule conflict, feeling better, need earlier slot..."
+                      rows={3}
+                      className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm text-gray-700 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 resize-none"
                     />
                   </div>
 
