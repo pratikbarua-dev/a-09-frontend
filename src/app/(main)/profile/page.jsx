@@ -173,7 +173,7 @@ export default function ProfilePage() {
                     {...register("name", { required: "Name is required" })}
                     type="text"
                     defaultValue={user.name}
-                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 transition"
+                    className=" text-gray-900 w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 transition"
                   />
                   {errors.name && <p className="text-xs text-red-500 mt-1">{errors.name.message}</p>}
                 </div>
@@ -187,7 +187,7 @@ export default function ProfilePage() {
                     type="text"
                     defaultValue={user.image || ""}
                     placeholder="https://example.com/avatar.jpg"
-                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 transition"
+                    className="text-gray-900 w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 transition"
                   />
                   {errors.image && <p className="text-xs text-red-500 mt-1">{errors.image.message}</p>}
                 </div>
