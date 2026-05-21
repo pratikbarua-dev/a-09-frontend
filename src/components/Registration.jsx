@@ -6,8 +6,45 @@ import Image from "next/image";
 import Link from "next/link";
 import { ShieldCheck } from "lucide-react";
 import { motion } from "framer-motion";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
 
 export default function RegisterPage() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [photoUrl, setPhotoUrl] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    try {
+      const { data, error: authError } = await authClient.signUp.email({
+        email,
+        password,
+        name,
+        image: photoUrl || undefined,
+      });
+
+      if (authError) {
+        setError(authError.message || "Registration failed. Please try again.");
+      } else {
+        router.push("/");
+        router.refresh();
+      }
+    } catch (err) {
+      console.error(err);
+      setError("An unexpected error occurred. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <motion.section
       initial={{ opacity: 0, x: 40 }}
@@ -16,9 +53,19 @@ export default function RegisterPage() {
       transition={{ duration: 0.5 }}
       className="min-h-screen overflow-hidden bg-[#f5f7fb]"
     >
+      {/* Loading Overlay */}
+      {loading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
+          <div className="flex flex-col items-center gap-4 rounded-3xl bg-white p-8 shadow-2xl">
+            <span className="loading loading-spinner loading-lg text-blue-600"></span>
+            <p className="text-sm font-semibold text-gray-700">Creating your account...</p>
+          </div>
+        </div>
+      )}
+
       <div className="grid min-h-screen lg:grid-cols-2">
         {/* LEFT */}
-        <div className="flex items-center justify-center bg-white px-6 py-12">
+        <div className="flex items-center justify-center bg-white px-4 sm:px-6 py-8 sm:py-12">
           <div className="w-full max-w-md">
             {/* Heading */}
             <div>
@@ -31,8 +78,18 @@ export default function RegisterPage() {
               </p>
             </div>
 
+            {/* Error Alert */}
+            {error && (
+              <div className="mt-6 flex items-center gap-3 rounded-2xl bg-red-50 p-4 text-sm text-red-600 border border-red-100 animate-shake">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 shrink-0 stroke-current text-red-500" fill="none" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span className="font-semibold">{error}</span>
+              </div>
+            )}
+
             {/* Form */}
-            <form className="mt-12 space-y-6">
+            <form onSubmit={handleRegister} className="mt-10 space-y-6">
               {/* Name */}
               <div>
                 <label className="mb-2 block text-sm font-semibold text-gray-700">
@@ -41,6 +98,9 @@ export default function RegisterPage() {
 
                 <input
                   type="text"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   placeholder="John Doe"
                   className="h-14 w-full rounded-2xl border border-gray-200 px-5 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                 />
@@ -54,6 +114,9 @@ export default function RegisterPage() {
 
                 <input
                   type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
                   className="h-14 w-full rounded-2xl border border-gray-200 px-5 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                 />
@@ -66,7 +129,9 @@ export default function RegisterPage() {
                 </label>
 
                 <input
-                  type="text"
+                  type="url"
+                  value={photoUrl}
+                  onChange={(e) => setPhotoUrl(e.target.value)}
                   placeholder="https://example.com/photo.jpg"
                   className="h-14 w-full rounded-2xl border border-gray-200 px-5 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                 />
@@ -80,14 +145,21 @@ export default function RegisterPage() {
 
                 <input
                   type="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   className="h-14 w-full rounded-2xl border border-gray-200 px-5 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                 />
               </div>
 
               {/* Button */}
-              <button className="h-14 w-full rounded-2xl bg-blue-600 text-sm font-bold text-white transition hover:bg-blue-700">
-                Create Account
+              <button
+                type="submit"
+                disabled={loading}
+                className="h-14 w-full rounded-2xl bg-blue-600 text-sm font-bold text-white transition hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? "Creating Account..." : "Create Account"}
               </button>
             </form>
 
