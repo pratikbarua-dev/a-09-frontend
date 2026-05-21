@@ -1,5 +1,5 @@
-// src/middleware.js
-// Optimistic middleware — checks for cookie existence only (no DB call).
+// src/proxy.js
+// Optimistic proxy — checks for cookie existence only (no DB call).
 // Strict session validation happens inside pages/route handlers via auth.api.getSession().
 
 import { NextResponse } from "next/server";
@@ -8,7 +8,7 @@ import { getSessionCookie } from "better-auth/cookies";
 // Routes that require authentication
 const protectedRoutes = ["/profile", "/appointments"];
 
-export async function middleware(request) {
+export async function proxy(request) {
   const { pathname } = request.nextUrl;
 
   // Check if the current path is protected
@@ -35,6 +35,6 @@ export async function middleware(request) {
 }
 
 export const config = {
-  // Only run middleware on these paths
+  // Only run proxy on these paths
   matcher: ["/profile/:path*", "/appointments/:path*"],
 };
