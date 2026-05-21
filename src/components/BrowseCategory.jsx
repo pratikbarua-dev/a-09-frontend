@@ -46,14 +46,14 @@ export default function BrowseCategory() {
           </h2>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6">
           {specialties.map((specialty, index) => {
             const Icon = specialty.icon;
 
             return (
               <div
                 key={index}
-                className="group rounded-2xl border border-gray-200 bg-white p-10 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+                className="group rounded-2xl border border-gray-200 bg-white p-6 sm:p-8 md:p-10 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
               >
                 <div className="flex flex-col items-center justify-center">
                   <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 text-blue-600">
