@@ -4,31 +4,51 @@
 
 import Image from "next/image";
 import { Phone, MapPin, CalendarDays, Activity, Pencil } from "lucide-react";
+import { useSession } from "@/lib/auth-client";
 
 export default function ProfileOverview() {
+  const { data: session, isPending } = useSession();
+
+  if (isPending) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#f5f7fb]">
+        <span className="loading loading-spinner loading-lg text-blue-600"></span>
+      </div>
+    );
+  }
+
+  const profileName = session?.user?.name || "Eleanor Vance";
+  const profileEmail = session?.user?.email || "eleanor.vance@example.com";
+  const profileImage = session?.user?.image || "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=1000&auto=format&fit=crop";
+
   return (
     <section className="min-h-screen bg-[#f5f7fb] px-4 py-14 md:px-8">
       <div className="mx-auto max-w-7xl">
         {/* Profile Header */}
         <div className="flex flex-col items-center text-center">
           {/* Profile Image */}
-          <div className="relative h-36 w-36 overflow-hidden rounded-full border-4 border-white shadow-xl">
-            <Image
-              src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=1000&auto=format&fit=crop"
-              alt="Profile"
-              fill
-              className="object-cover"
-            />
+          <div className="relative h-36 w-36 overflow-hidden rounded-full border-4 border-white shadow-xl bg-blue-100 flex items-center justify-center">
+            {session?.user?.image ? (
+              <img
+                src={profileImage}
+                alt="Profile"
+                className="object-cover h-full w-full"
+              />
+            ) : (
+              <div className="bg-blue-600 text-white flex items-center justify-center font-bold text-5xl h-full w-full select-none">
+                {profileName.charAt(0).toUpperCase()}
+              </div>
+            )}
           </div>
 
           {/* Name */}
           <h1 className="mt-6 text-5xl font-extrabold text-blue-700">
-            Eleanor Vance
+            {profileName}
           </h1>
 
           {/* Email */}
           <p className="mt-3 text-base text-gray-500">
-            eleanor.vance@example.com
+            {profileEmail}
           </p>
 
           {/* Button */}
@@ -43,6 +63,7 @@ export default function ProfileOverview() {
           {/* Personal Info */}
           <div className="rounded-3xl border border-gray-200 bg-white p-8 shadow-sm">
             <h2 className="text-2xl font-bold text-blue-700">Personal Info</h2>
+
 
             <div className="mt-8 space-y-5">
               {/* Phone */}
