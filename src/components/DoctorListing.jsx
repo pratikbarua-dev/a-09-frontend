@@ -6,6 +6,8 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import { getDoctors, createAppointment } from "@/lib/api";
 import { useSession } from "@/lib/auth-client";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 import {
   Star,
   MapPin,
@@ -21,9 +23,20 @@ import {
 
 export default function DoctorListing({ externalSearchQuery = "" }) {
   const { data: session } = useSession();
+  const router = useRouter();
   const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Auth-gate helper — redirects to login if not authenticated
+  const requireLogin = (callback) => {
+    if (!session) {
+      toast.error("Please login to access this feature.");
+      router.push("/login");
+      return;
+    }
+    callback();
+  };
 
   // Sorting State
   const [sortBy, setSortBy] = useState("relevance");
@@ -53,7 +66,7 @@ export default function DoctorListing({ externalSearchQuery = "" }) {
         setDoctors(data);
         setError(null);
       } catch (err) {
-        console.error(err);
+        toast.error("Failed to load doctors. Please ensure the backend is running.");
         setError("Failed to load doctors. Please ensure the backend server is running.");
       } finally {
         setLoading(false);
@@ -130,7 +143,7 @@ export default function DoctorListing({ externalSearchQuery = "" }) {
         setBookingNotes("");
       }, 2000);
     } catch (err) {
-      console.error(err);
+      toast.error("Failed to book appointment. Please try again.");
       setBookingStatus("error");
       setBookingError("Failed to book appointment. Please try again.");
     }
@@ -410,14 +423,14 @@ export default function DoctorListing({ externalSearchQuery = "" }) {
                     {/* Buttons */}
                     <div className="mt-5 flex gap-3">
                       <button
-                        onClick={() => setBookingDoctor(doctor)}
+                        onClick={() => requireLogin(() => setBookingDoctor(doctor))}
                         className="flex-1 rounded-lg bg-blue-600 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 cursor-pointer active:scale-95"
                       >
                         Book Now
                       </button>
 
                       <button
-                        onClick={() => setProfileDoctor(doctor)}
+                        onClick={() => requireLogin(() => setProfileDoctor(doctor))}
                         className="rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-100 cursor-pointer active:scale-95"
                       >
                         View Profile

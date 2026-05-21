@@ -1,5 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -12,9 +14,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Lumina Library",
+  title: {
+    default: "DocAppoint — Book Doctor Appointments Online",
+    template: "%s | DocAppoint",
+  },
   description:
-    "Discover, borrow, and explore books from different genres with a modern digital library experience.",
+    "Book appointments with top-rated doctors and specialists. Manage your healthcare journey with DocAppoint.",
+  keywords: ["doctor", "appointment", "healthcare", "specialist", "booking", "medical"],
 };
 
 export default function RootLayout({ children }) {
@@ -26,6 +32,7 @@ export default function RootLayout({ children }) {
     >
       <body className="min-h-full flex flex-col" data-theme="light">
         {children}
+        <ToastContainer position="top-right" autoClose={3000} />
       </body>
     </html>
   );

@@ -6,12 +6,26 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { getDoctors } from "@/lib/api";
+import { useSession } from "@/lib/auth-client";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 import { Star, ArrowRight, X, CalendarClock, MapPin } from "lucide-react";
 
 export default function SpecialistSection() {
   const [doctorsList, setDoctorsList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
+  const { data: session } = useSession();
+  const router = useRouter();
+
+  const handleViewDetails = (doctor) => {
+    if (!session) {
+      toast.error("Please login to view doctor details.");
+      router.push("/login");
+      return;
+    }
+    setSelectedDoctor(doctor);
+  };
 
   useEffect(() => {
     async function loadTopDoctors() {
@@ -23,52 +37,13 @@ export default function SpecialistSection() {
           setDoctorsList(data.slice(0, 3));
         }
       } catch (err) {
-        console.error("Failed to load top doctors, falling back to mock data", err);
+        toast.error("Failed to load top specialists.");
       } finally {
         setLoading(false);
       }
     }
     loadTopDoctors();
   }, []);
-
-  // Fallback mock data in case the database is empty or connection fails
-  const mockDoctors = [
-    {
-      name: "Dr. Ayesha Rahman",
-      specialty: "Cardiologist",
-      experience: "10 years",
-      hospital: "Labaid Cardiac Hospital",
-      location: "Dhanmondi, Dhaka",
-      fee: 800,
-      image: "https://randomuser.me/api/portraits/women/44.jpg",
-      description: "Highly experienced cardiologist specializing in heart diseases, preventive care, and patient-centered treatment.",
-      availability: ["09:00 AM - 12:00 PM", "04:00 PM - 07:00 PM"],
-    },
-    {
-      name: "Dr. Fahim Hasan",
-      specialty: "Neurologist",
-      experience: "12 years",
-      hospital: "Square Hospital",
-      location: "Panthapath, Dhaka",
-      fee: 1000,
-      image: "https://randomuser.me/api/portraits/men/32.jpg",
-      description: "Expert neurologist focusing on stroke management, epilepsy, and nervous system disorders.",
-      availability: ["10:00 AM - 01:00 PM", "06:00 PM - 09:00 PM"],
-    },
-    {
-      name: "Dr. Nusrat Jahan",
-      specialty: "Dermatologist",
-      experience: "8 years",
-      hospital: "Popular Diagnostic Center",
-      location: "Shyamoli, Dhaka",
-      fee: 700,
-      image: "https://randomuser.me/api/portraits/women/68.jpg",
-      description: "Specialist in skin care, acne treatment, cosmetic dermatology, and laser procedures.",
-      availability: ["11:00 AM - 02:00 PM", "05:00 PM - 08:00 PM"],
-    },
-  ];
-
-  const displayedDoctors = doctorsList.length > 0 ? doctorsList : mockDoctors;
 
   return (
     <section className="bg-[#f5f7fb] px-6 py-14">
@@ -94,7 +69,7 @@ export default function SpecialistSection() {
         </div>
 
         {/* Loading Skeleton */}
-        {loading && doctorsList.length === 0 ? (
+        {loading ? (
           <div className="grid gap-6 md:grid-cols-3">
             {[...Array(3)].map((_, i) => (
               <div key={i} className="rounded-2xl bg-white p-8 shadow-md flex flex-col items-center">
@@ -106,9 +81,17 @@ export default function SpecialistSection() {
               </div>
             ))}
           </div>
+        ) : doctorsList.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 bg-white rounded-3xl border border-gray-200 shadow-sm text-center">
+            <CalendarClock size={48} className="text-gray-300 mb-4" />
+            <h3 className="text-xl font-bold text-gray-900">No Specialists Found</h3>
+            <p className="text-sm text-gray-500 mt-2 max-w-sm">
+              We couldn&apos;t load doctors right now. Please check back later.
+            </p>
+          </div>
         ) : (
           <div className="grid gap-6 md:grid-cols-3">
-            {displayedDoctors.map((doctor, index) => {
+            {doctorsList.map((doctor, index) => {
               const reviewsCount = 120 + (index * 15);
               return (
                 <div key={doctor._id || doctor.id || index} className="rounded-2xl bg-white p-8 shadow-md flex flex-col justify-between h-full">
@@ -158,7 +141,7 @@ export default function SpecialistSection() {
 
                   <div className="mt-6">
                     <button
-                      onClick={() => setSelectedDoctor(doctor)}
+                      onClick={() => handleViewDetails(doctor)}
                       className="w-full rounded-xl border border-blue-500 py-2.5 text-sm font-semibold text-blue-600 hover:bg-blue-50 transition cursor-pointer active:scale-95 text-center block"
                     >
                       View Details

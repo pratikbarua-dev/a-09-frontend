@@ -9,6 +9,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
+import { toast } from "react-toastify";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -34,7 +35,7 @@ export default function LoginPage() {
         router.refresh();
       }
     } catch (err) {
-      console.error(err);
+      toast.error("An unexpected error occurred. Please try again.");
       setError("An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);

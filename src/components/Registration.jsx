@@ -129,7 +129,12 @@ export default function RegisterPage() {
             </div>
 
             {/* Core Registration Inputs Element Wrapper */}
-            <form onSubmit={handleSubmit(regisHandler)} className="space-y-5">
+            <form onSubmit={handleSubmit(regisHandler, (formErrors) => {
+              const firstError = Object.values(formErrors)[0];
+              if (firstError?.message) {
+                toast.error(firstError.message);
+              }
+            })} className="space-y-5">
               
               {/* Full Name */}
               <div>
@@ -182,7 +187,19 @@ export default function RegisterPage() {
                   Password
                 </label>
                 <input
-                  {...register("password", { required: "Password is required" })}
+                  {...register("password", {
+                    required: "Password is required",
+                    minLength: {
+                      value: 6,
+                      message: "Password must be at least 6 characters",
+                    },
+                    validate: {
+                      hasUppercase: (v) =>
+                        /[A-Z]/.test(v) || "Must contain at least 1 uppercase letter",
+                      hasLowercase: (v) =>
+                        /[a-z]/.test(v) || "Must contain at least 1 lowercase letter",
+                    },
+                  })}
                   type="password"
                   placeholder="••••••••"
                   className={`h-14 w-full rounded-2xl border px-5 text-sm outline-none transition focus:ring-4 focus:ring-blue-100 ${

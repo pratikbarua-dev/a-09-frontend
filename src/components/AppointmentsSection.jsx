@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { getAppointments, deleteAppointment, updateAppointment } from "@/lib/api";
+import { toast } from "react-toastify";
 import {
   Search,
   ChevronDown,
@@ -17,25 +18,27 @@ import {
   AlertTriangle,
   CheckCircle2,
   AlertCircle,
-  HelpCircle,
 } from "lucide-react";
 
 export default function AppointmentsSection() {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
+  // Search and Sort State
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("date-desc"); // date-desc, date-asc, name-asc, name-desc
 
   // Modals state
   const [rescheduleAppointment, setRescheduleAppointment] = useState(null);
   const [rescheduleDate, setRescheduleDate] = useState("");
   const [rescheduleTime, setRescheduleTime] = useState("");
   const [rescheduleReason, setRescheduleReason] = useState("");
-  const [rescheduleStatus, setRescheduleStatus] = useState("idle"); // idle | submitting | success | error
+  const [rescheduleStatus, setRescheduleStatus] = useState("idle"); 
   const [rescheduleError, setRescheduleError] = useState("");
 
   const [cancelAppointment, setCancelAppointment] = useState(null);
-  const [cancelStatus, setCancelStatus] = useState("idle"); // idle | submitting | success | error
+  const [cancelStatus, setCancelStatus] = useState("idle"); 
 
   // Fetch appointments on mount
   async function loadAppointments() {
@@ -45,7 +48,7 @@ export default function AppointmentsSection() {
       setAppointments(data);
       setError(null);
     } catch (err) {
-      console.error(err);
+      toast.error("Failed to load appointments. Please ensure the backend is running.");
       setError("Failed to load appointments. Please ensure the backend server is running.");
     } finally {
       setLoading(false);
@@ -53,7 +56,11 @@ export default function AppointmentsSection() {
   }
 
   useEffect(() => {
-    loadAppointments();
+    const timer = setTimeout(() => {
+      loadAppointments();
+    }, 0);
+
+    return () => clearTimeout(timer);
   }, []);
 
   // Reschedule Form Submission
@@ -86,8 +93,8 @@ export default function AppointmentsSection() {
 
       await updateAppointment(rescheduleAppointment._id || rescheduleAppointment.id, {
         date: newDateString,
-        appointmentDate: rescheduleDate, // YYYY-MM-DD
-        appointmentTime: formattedTime, // e.g. "10:30 AM"
+        appointmentDate: rescheduleDate, 
+        appointmentTime: formattedTime, 
         rescheduleReason: rescheduleReason.trim() || undefined,
       });
 
@@ -103,7 +110,7 @@ export default function AppointmentsSection() {
         loadAppointments();
       }, 2000);
     } catch (err) {
-      console.error(err);
+      toast.error("Failed to reschedule. Please try again.");
       setRescheduleStatus("error");
       setRescheduleError("Failed to reschedule. Please try again.");
     }
@@ -122,21 +129,45 @@ export default function AppointmentsSection() {
         loadAppointments();
       }, 2000);
     } catch (err) {
-      console.error(err);
+      toast.error("Failed to cancel appointment. Please try again.");
       setCancelStatus("error");
     }
   };
 
-  // Filtered Appointments
+  // 1. FILTERING
   const filteredAppointments = appointments.filter((appointment) => {
     if (!searchQuery) return true;
     const name = appointment.doctorName || appointment.name || "";
     const specialty = appointment.specialty || "";
+    const hospital = appointment.hospital || "";
     const query = searchQuery.toLowerCase();
     return (
       name.toLowerCase().includes(query) ||
-      specialty.toLowerCase().includes(query)
+      specialty.toLowerCase().includes(query) ||
+      hospital.toLowerCase().includes(query)
     );
+  });
+
+  // 2. SORTING
+  const processedAppointments = [...filteredAppointments].sort((a, b) => {
+    const nameA = (a.doctorName || a.name || "").toLowerCase();
+    const nameB = (b.doctorName || b.name || "").toLowerCase();
+    
+    // Attempt to parse dates for sorting
+    const dateA = new Date(a.appointmentDate || a.date || 0).getTime();
+    const dateB = new Date(b.appointmentDate || b.date || 0).getTime();
+
+    switch (sortBy) {
+      case "name-asc":
+        return nameA.localeCompare(nameB);
+      case "name-desc":
+        return nameB.localeCompare(nameA);
+      case "date-asc":
+        return dateA - dateB;
+      case "date-desc":
+      default:
+        return dateB - dateA;
+    }
   });
 
   return (
@@ -166,7 +197,7 @@ export default function AppointmentsSection() {
 
               <input
                 type="text"
-                placeholder="Search by Doctor Name or Specialty..."
+                placeholder="Search name, specialty, hospital..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="h-12 w-full rounded-xl border border-gray-200 bg-white pl-11 pr-4 text-sm text-gray-700 outline-none transition focus:border-blue-500 sm:w-[320px]"
@@ -174,11 +205,22 @@ export default function AppointmentsSection() {
             </div>
 
             {/* Sort */}
-            <button className="flex h-12 items-center justify-between rounded-xl border border-gray-200 bg-white px-4 text-sm text-gray-700 sm:w-[170px]">
-              <span>Sort by...</span>
-
-              <ChevronDown size={16} className="text-gray-400" />
-            </button>
+            <div className="relative flex h-12 sm:w-[170px]">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="h-full w-full appearance-none rounded-xl border border-gray-200 bg-white pl-4 pr-10 text-sm text-gray-700 outline-none transition focus:border-blue-500 cursor-pointer"
+              >
+                <option value="date-desc">Newest First</option>
+                <option value="date-asc">Oldest First</option>
+                <option value="name-asc">Name (A-Z)</option>
+                <option value="name-desc">Name (Z-A)</option>
+              </select>
+              <ChevronDown
+                size={16}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+              />
+            </div>
           </div>
         </div>
 
@@ -221,13 +263,13 @@ export default function AppointmentsSection() {
         )}
 
         {/* Empty State */}
-        {!loading && !error && filteredAppointments.length === 0 && (
+        {!loading && !error && processedAppointments.length === 0 && (
           <div className="flex flex-col items-center justify-center p-16 bg-white rounded-3xl border border-gray-200 shadow-sm text-center">
             <CalendarClock size={64} className="text-gray-300 mb-4 animate-pulse" />
-            <h3 className="text-2xl font-bold text-gray-900">No Appointments Booked</h3>
+            <h3 className="text-2xl font-bold text-gray-900">No Appointments Found</h3>
             <p className="text-sm text-gray-500 max-w-sm mt-2 mb-8">
               {searchQuery
-                ? "No appointments match your search query."
+                ? "No appointments match your search criteria. Try adjusting your filters."
                 : "You don't have any upcoming medical appointments scheduled."}
             </p>
             {!searchQuery && (
@@ -242,9 +284,9 @@ export default function AppointmentsSection() {
         )}
 
         {/* Appointment Cards Grid */}
-        {!loading && !error && filteredAppointments.length > 0 && (
+        {!loading && !error && processedAppointments.length > 0 && (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredAppointments.map((appointment, index) => (
+            {processedAppointments.map((appointment, index) => (
               <div
                 key={appointment._id || appointment.id || index}
                 className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md flex flex-col justify-between"

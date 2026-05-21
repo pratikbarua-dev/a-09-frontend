@@ -1,6 +1,4 @@
-// src/app/api/user/route.js
-// Protected API route: returns authenticated user's profile data.
-// Uses strict server-side session validation via Better Auth.
+
 
 import { getSession } from "@/lib/session";
 

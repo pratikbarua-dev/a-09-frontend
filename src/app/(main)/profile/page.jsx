@@ -5,6 +5,7 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useSession, authClient } from "@/lib/auth-client";
+import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { Mail, User, CalendarDays, Activity, Pencil, Save, X, Shield } from "lucide-react";
@@ -57,7 +58,7 @@ export default function ProfilePage() {
       });
       setIsEditing(false);
     } catch (error) {
-      console.error("Failed to update user context profile:", error);
+      toast.error("Failed to update profile. Please try again.");
     }
   };
 

@@ -28,7 +28,6 @@ export default function Navbar() {
     router.push("/");
     router.refresh();
   };
-  
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/95 backdrop-blur">
@@ -42,9 +41,9 @@ export default function Navbar() {
         {/* Desktop Nav */}
         <div className="hidden items-center gap-8 md:flex">
           <Link
-            href="/"
+            href="/home"
             className={`pb-1 text-sm transition-all duration-200 border-b-2 ${
-              isActive("/")
+              isActive("/home")
                 ? "border-blue-600 text-blue-600 font-semibold"
                 : "border-transparent text-gray-600 hover:text-blue-600 font-medium"
             }`}
@@ -80,40 +79,46 @@ export default function Navbar() {
           {isPending ? (
             <div className="h-10 w-24 animate-pulse rounded-lg bg-gray-100"></div>
           ) : session ? (
-            <div className="dropdown dropdown-end relative">
-              <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar border-2 border-blue-500 p-0 overflow-hidden flex items-center justify-center">
-                <div className="w-10 h-10 rounded-full overflow-hidden relative">
-                  {session.user.image ? (
-                    <Image 
-                      alt="User Avatar" 
-                      src={session.user.image} 
-                      width={40} 
-                      height={40} 
-                      className="object-cover h-full w-full" 
-                    />
-                  ) : (
-                    <div className="bg-blue-600 text-white flex items-center justify-center font-bold text-base h-full w-full">
-                      {session.user.name ? session.user.name.charAt(0).toUpperCase() : "U"}
-                    </div>
-                  )}
+            <div className="flex items-center gap-4">
+              {/* Profile Picture & Dropdown */}
+              <div className="dropdown dropdown-end relative">
+                <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar border-2 border-blue-500 p-0 overflow-hidden flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-full overflow-hidden relative">
+                    {session.user.image ? (
+                      <Image 
+                        alt="User Avatar" 
+                        src={session.user.image} 
+                        width={40} 
+                        height={40} 
+                        className="object-cover h-full w-full" 
+                      />
+                    ) : (
+                      <div className="bg-blue-600 text-white flex items-center justify-center font-bold text-base h-full w-full">
+                        {session.user.name ? session.user.name.charAt(0).toUpperCase() : "U"}
+                      </div>
+                    )}
+                  </div>
                 </div>
+                <ul tabIndex={0} className="menu menu-sm dropdown-content absolute right-0 mt-3 z-50 p-3 shadow-xl bg-white border border-gray-100 rounded-2xl w-52 space-y-1">
+                  <li className="px-2 py-1.5 border-b border-gray-100">
+                    <p className="font-bold text-gray-900 truncate p-0 block text-sm">{session.user.name}</p>
+                    <p className="text-[10px] text-gray-400 truncate p-0 block mt-0.5">{session.user.email}</p>
+                  </li>
+                  <li>
+                    <Link href="/profile" className="rounded-xl px-3 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition mt-1">
+                      View Profile
+                    </Link>
+                  </li>
+                </ul>
               </div>
-              <ul tabIndex={0} className="menu menu-sm dropdown-content absolute right-0 mt-3 z-50 p-3 shadow-xl bg-white border border-gray-100 rounded-2xl w-52 space-y-1">
-                <li className="px-2 py-1.5 border-b border-gray-100">
-                  <p className="font-bold text-gray-900 truncate p-0 block text-sm">{session.user.name}</p>
-                  <p className="text-[10px] text-gray-400 truncate p-0 block mt-0.5">{session.user.email}</p>
-                </li>
-                <li>
-                  <Link href="/profile" className="rounded-xl px-3 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition mt-1">
-                    View Profile
-                  </Link>
-                </li>
-                <li>
-                  <button onClick={handleSignOut} className="rounded-xl px-3 py-2 text-red-600 hover:bg-red-50 transition text-left w-full block">
-                    Logout
-                  </button>
-                </li>
-              </ul>
+
+              {/* Logout Button beside avatar */}
+              <button 
+                onClick={handleSignOut} 
+                className="rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-100 hover:border-red-300"
+              >
+                Logout
+              </button>
             </div>
           ) : (
             <>
@@ -148,9 +153,9 @@ export default function Navbar() {
             
             <Link
               onClick={() => setMobileMenu(false)}
-              href="/"
+              href="/home"
               className={`text-sm transition-colors duration-200 ${
-                isActive("/")
+                isActive("/home")
                   ? "text-blue-600 font-semibold"
                   : "text-gray-700 hover:text-blue-600 font-medium"
               }`}
@@ -182,32 +187,43 @@ export default function Navbar() {
               Appointments
             </Link>
 
-            <div className="flex flex-col gap-3 pt-2 border-t border-gray-100">
+            <div className="flex flex-col gap-4 pt-2 border-t border-gray-100">
               {isPending ? (
                 <div className="h-10 w-full animate-pulse rounded-lg bg-gray-100"></div>
               ) : session ? (
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3 px-1 py-1">
-                    <div className="w-10 h-10 rounded-full overflow-hidden relative border border-blue-500">
-                      {session.user.image ? (
-                        <Image 
-                          alt="User Avatar" 
-                          src={session.user.image} 
-                          width={40} 
-                          height={40} 
-                          className="object-cover h-full w-full" 
-                        />
-                      ) : (
-                        <div className="bg-blue-600 text-white flex items-center justify-center font-bold text-base h-full w-full">
-                          {session.user.name ? session.user.name.charAt(0).toUpperCase() : "U"}
-                        </div>
-                      )}
+                <div className="space-y-4">
+                  {/* Mobile Profile & Logout */}
+                  <div className="flex items-center justify-between px-1">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full overflow-hidden relative border border-blue-500">
+                        {session.user.image ? (
+                          <Image 
+                            alt="User Avatar" 
+                            src={session.user.image} 
+                            width={40} 
+                            height={40} 
+                            className="object-cover h-full w-full" 
+                          />
+                        ) : (
+                          <div className="bg-blue-600 text-white flex items-center justify-center font-bold text-base h-full w-full">
+                            {session.user.name ? session.user.name.charAt(0).toUpperCase() : "U"}
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <p className="font-bold text-gray-900 text-sm truncate max-w-[150px]">{session.user.name}</p>
+                        <p className="text-[11px] text-gray-500 truncate max-w-[150px]">{session.user.email}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-bold text-gray-900 text-sm truncate max-w-[180px]">{session.user.name}</p>
-                      <p className="text-[11px] text-gray-500 truncate max-w-[180px]">{session.user.email}</p>
-                    </div>
+                    
+                    <button
+                      onClick={handleSignOut}
+                      className="rounded-lg bg-red-50 px-4 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-100"
+                    >
+                      Logout
+                    </button>
                   </div>
+
                   <Link
                     onClick={() => setMobileMenu(false)}
                     href="/profile"
@@ -215,12 +231,6 @@ export default function Navbar() {
                   >
                     View Profile
                   </Link>
-                  <button
-                    onClick={handleSignOut}
-                    className="w-full rounded-lg bg-red-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-red-700"
-                  >
-                    Logout
-                  </button>
                 </div>
               ) : (
                 <>

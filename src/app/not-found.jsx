@@ -4,6 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { Home } from "lucide-react";
 
+export const metadata = {
+  title: "Page Not Found",
+  description: "The page you are looking for does not exist. Navigate back to DocAppoint.",
+};
+
 export default function NotFound() {
   return (
     <section className="flex min-h-screen items-center justify-center bg-[#f5f7fb] px-6">
