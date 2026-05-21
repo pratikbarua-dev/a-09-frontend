@@ -145,7 +145,7 @@ export default function RegisterPage() {
                   {...register("name", { required: "Full name is required" })}
                   type="text"
                   placeholder="Eleanor Vance"
-                  className={`h-14 w-full rounded-2xl border px-5 text-sm outline-none transition focus:ring-4 focus:ring-blue-100 ${
+                  className={`text-gray-900 h-14 w-full rounded-2xl border px-5 text-sm outline-none transition focus:ring-4 focus:ring-blue-100 ${
                     errors.name ? "border-red-500 focus:border-red-500" : "border-gray-200 focus:border-blue-500"
                   }`}
                 />
@@ -161,7 +161,7 @@ export default function RegisterPage() {
                   {...register("email", { required: "Email is required" })}
                   type="email"
                   placeholder="scholar@example.com"
-                  className={`h-14 w-full rounded-2xl border px-5 text-sm outline-none transition focus:ring-4 focus:ring-blue-100 ${
+                  className={`text-gray-900 h-14 w-full rounded-2xl border px-5 text-sm outline-none transition focus:ring-4 focus:ring-blue-100 ${
                     errors.email ? "border-red-500 focus:border-red-500" : "border-gray-200 focus:border-blue-500"
                   }`}
                 />
@@ -177,7 +177,7 @@ export default function RegisterPage() {
                   {...register("image")}
                   type="url"
                   placeholder="https://example.com/photo.jpg"
-                  className="h-14 w-full rounded-2xl border border-gray-200 px-5 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                  className="text-gray-900 h-14 w-full rounded-2xl border border-gray-200 px-5 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                 />
               </div>
 
@@ -202,7 +202,7 @@ export default function RegisterPage() {
                   })}
                   type="password"
                   placeholder="••••••••"
-                  className={`h-14 w-full rounded-2xl border px-5 text-sm outline-none transition focus:ring-4 focus:ring-blue-100 ${
+                  className={`text-gray-900 h-14 w-full rounded-2xl border px-5 text-sm outline-none transition focus:ring-4 focus:ring-blue-100 ${
                     errors.password ? "border-red-500 focus:border-red-500" : "border-gray-200 focus:border-blue-500"
                   }`}
                 />
