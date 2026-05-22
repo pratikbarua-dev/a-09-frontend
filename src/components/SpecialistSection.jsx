@@ -32,9 +32,10 @@ export default function SpecialistSection() {
       try {
         setLoading(true);
         const data = await getDoctors();
-        // Take first 3 doctors from DB
+        // Sort by rating and take top 3
         if (data && data.length > 0) {
-          setDoctorsList(data.slice(0, 3));
+          const sorted = data.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+          setDoctorsList(sorted.slice(0, 3));
         }
       } catch (err) {
         toast.error("Failed to load top specialists.");
@@ -92,7 +93,8 @@ export default function SpecialistSection() {
         ) : (
           <div className="grid gap-6 md:grid-cols-3">
             {doctorsList.map((doctor, index) => {
-              const reviewsCount = 120 + (index * 15);
+              const reviewsCount = doctor.reviewsCount || doctor.reviews?.length || 0;
+              const rating = doctor.rating || 4.8;
               return (
                 <div key={doctor._id || doctor.id || index} className="rounded-2xl bg-white p-8 shadow-md flex flex-col justify-between h-full">
                   <div className="flex flex-col items-center text-center">
@@ -127,7 +129,7 @@ export default function SpecialistSection() {
                         ))}
 
                         <span className="ml-2 text-sm font-medium text-gray-500">
-                          ({reviewsCount} Reviews)
+                          ({rating.toFixed(1)}) {reviewsCount > 0 && `• ${reviewsCount} Reviews`}
                         </span>
                       </div>
 
@@ -187,7 +189,7 @@ export default function SpecialistSection() {
                 <div className="mt-3 flex items-center justify-center sm:justify-start gap-3 text-sm text-gray-500">
                   <div className="flex items-center gap-1 text-yellow-400">
                     <Star size={15} fill="currentColor" strokeWidth={0} />
-                    <span className="text-gray-800 font-bold">4.8</span>
+                    <span className="text-gray-800 font-bold">{(selectedDoctor.rating || 4.8).toFixed(1)}</span>
                   </div>
                   <span>•</span>
                   <span className="bg-gray-100 px-2 py-0.5 rounded text-xs font-medium text-gray-700">{selectedDoctor.experience || "5+ Years Exp"}</span>
